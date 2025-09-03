@@ -9,7 +9,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    const handleMouseMove = (e: MouseEvent) => setMousePosition({ x: e.clientX, y: e.clientY });
     
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
