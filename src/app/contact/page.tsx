@@ -1,21 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Send, Linkedin, Github, Rss, ArrowRight, CheckCircle } from 'lucide-react';
 
 // Custom Input component for dark theme
-const Input = ({ ...props }) => (
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+const Input: React.FC<InputProps> = (props) => (
   <input 
-    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-all duration-300"
+    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition"
     {...props} 
   />
 );
 
 // Custom Textarea component for dark theme
-const Textarea = ({ ...props }) => (
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+const Textarea: React.FC<TextareaProps> = (props) => (
   <textarea 
-    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-all duration-300 min-h-[140px]"
+    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition"
     {...props}
   />
 );
@@ -23,7 +25,7 @@ const Textarea = ({ ...props }) => (
 export default function Contact() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // In a real app, you would handle form submission here.
     // For this demo, we'll just show the success message.
@@ -84,13 +86,13 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <h3 className="text-2xl font-bold text-white mb-6">Send Us a Message</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <Input required placeholder="First Name" />
-                  <Input required placeholder="Last Name" />
+                  <Input required placeholder="First Name" name="firstName" />
+                  <Input required placeholder="Last Name" name="lastName" />
                 </div>
-                <Input required type="email" placeholder="Your Email Address" />
-                <Input placeholder="Organization (Optional)" />
-                <Textarea required placeholder="Your message..." />
-                <button type="submit" className="w-full group relative inline-flex items-center justify-center px-8 py-3 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full overflow-hidden transition-all duration-300 hover:from-cyan-600 hover:to-purple-600 hover:shadow-lg hover:shadow-cyan-500/30">
+                <Input required type="email" placeholder="Your Email Address" name="email" />
+                <Input placeholder="Organization (Optional)" name="organization" />
+                <Textarea required placeholder="Your message..." name="message" />
+                <button type="submit" className="w-full group relative inline-flex items-center justify-center px-8 py-3 text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg transition">
                   <span className="relative">Send Message</span>
                   <Send className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -135,9 +137,9 @@ export default function Contact() {
             <motion.div variants={itemVariants} className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
               <h3 className="text-xl font-bold text-white mb-6">Follow Our Mission</h3>
               <div className="flex space-x-4">
-                <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Github className="h-6 w-6" /></a>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Linkedin className="h-6 w-6" /></a>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Rss className="h-6 w-6" /></a>
+                <a href="https://github.com/Divin2009/Envirocast" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Github className="w-6 h-6" /></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Linkedin className="w-6 h-6" /></a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-700/50 text-slate-300 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300"><Rss className="w-6 h-6" /></a>
               </div>
             </motion.div>
           </motion.div>
