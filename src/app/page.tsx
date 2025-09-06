@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Globe, Zap, Target, Users, ArrowRight, Play, Pause, BarChart3, Brain, Atom, Waves } from 'lucide-react';
-import type { LucideIcon } from "lucide-react";
 
 // Animated Background Component
 const QuantumBackground = () => {
@@ -105,7 +104,6 @@ const QuantumBackground = () => {
   );
 };
 
-// At line 108, replace with:
 type FloatingElementProps = {
   children: React.ReactNode;
   delay?: number;
@@ -113,11 +111,7 @@ type FloatingElementProps = {
 };
 
 // Floating Animation Component
-<<<<<<< HEAD
-const FloatingElement = ({ children: React, delay = 0, className = "" }) => {
-=======
 const FloatingElement = ({ children, delay = 0, className = "" }: FloatingElementProps) => {
->>>>>>> refs/remotes/origin/main
   return (
     <div 
       className={`animate-pulse ${className}`}
@@ -140,18 +134,22 @@ const FloatingElement = ({ children, delay = 0, className = "" }: FloatingElemen
 };
 
 type MetricCardProps = {
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   value: number | string;
   label: string;
   color: string;
 };
 
 // Interactive Metric Card
-const MetricCard = ({ icon, value, label, color }: MetricCardProps) => {
+// Interactive Metric Card
+const MetricCard = ({ icon: Icon, value, label, color }: MetricCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [animatedValue, setAnimatedValue] = useState(0);
 
   useEffect(() => {
+    // Only animate numbers
+    if (typeof value === 'string') return;
+
     const timer = setTimeout(() => {
       const interval = setInterval(() => {
         setAnimatedValue(prev => {
@@ -159,6 +157,7 @@ const MetricCard = ({ icon, value, label, color }: MetricCardProps) => {
           return prev < value ? Math.min(prev + increment, value) : value;
         });
       }, 50);
+
       return () => clearInterval(interval);
     }, 1000);
 
@@ -175,10 +174,13 @@ const MetricCard = ({ icon, value, label, color }: MetricCardProps) => {
         <Icon className={`w-8 h-8 text-${color}-400 group-hover:text-${color}-300 transition-colors`} />
         <div className={`w-2 h-2 rounded-full bg-${color}-400 animate-pulse`}></div>
       </div>
+      
       <div className={`text-3xl font-bold text-${color}-300 mb-2`}>
-        {typeof animatedValue === 'string' ? animatedValue : animatedValue.toLocaleString()}
+        {typeof value === 'string' ? value : animatedValue.toLocaleString()}
       </div>
+      
       <div className="text-slate-400 text-sm">{label}</div>
+      
       {isHovered && (
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 pointer-events-none"></div>
       )}
