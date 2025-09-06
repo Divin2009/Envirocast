@@ -13,24 +13,25 @@ type QuantumVisualizationProps = {
   isActive: boolean;
   algorithm: any;
 };
+type Qubit = { x: number; y: number; state: number; phase: number; entangled: boolean };
+type Connection = { from: number; to: number; strength: number };
 
-// Quantum Visualization Component
 const QuantumVisualization = ({ isActive, algorithm }: QuantumVisualizationProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     if (!canvasRef.current || !isActive) return;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     canvas.width = 400;
     canvas.height = 300;
-    
-    const qubits = [];
-    const connections = [];
-    
+
+    const qubits: Qubit[] = [];
+    const connections: Connection[] = [];
+
     // Create quantum state visualization
     for (let i = 0; i < 8; i++) {
       qubits.push({
@@ -41,42 +42,42 @@ const QuantumVisualization = ({ isActive, algorithm }: QuantumVisualizationProps
         entangled: i % 2 === 0
       });
     }
-    
+
     // Create entanglement connections
     for (let i = 0; i < qubits.length - 1; i += 2) {
       connections.push({ from: i, to: i + 1, strength: Math.random() });
     }
-    
+
     const animate = () => {
       ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       // Draw connections (entanglement)
       connections.forEach(conn => {
         const from = qubits[conn.from];
         const to = qubits[conn.to];
-        
+
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.strokeStyle = `rgba(0, 212, 255, ${conn.strength * 0.5})`;
         ctx.lineWidth = 2;
         ctx.stroke();
-        
+
         // Animate connection strength
         conn.strength = 0.3 + Math.sin(Date.now() * 0.003 + conn.from) * 0.3;
       });
-      
+
       // Draw qubits
       qubits.forEach((qubit, i) => {
         // Update quantum state
         qubit.phase += 0.02;
         qubit.state = 0.5 + Math.sin(qubit.phase) * 0.3;
-        
+
         // Draw qubit sphere
         const radius = 15 + qubit.state * 10;
         const gradient = ctx.createRadialGradient(qubit.x, qubit.y, 0, qubit.x, qubit.y, radius);
-        
+
         if (qubit.entangled) {
           gradient.addColorStop(0, 'rgba(139, 92, 246, 0.8)');
           gradient.addColorStop(1, 'rgba(139, 92, 246, 0.2)');
@@ -84,38 +85,38 @@ const QuantumVisualization = ({ isActive, algorithm }: QuantumVisualizationProps
           gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
           gradient.addColorStop(1, 'rgba(0, 212, 255, 0.2)');
         }
-        
+
         ctx.beginPath();
         ctx.arc(qubit.x, qubit.y, radius, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
-        
+
         // Draw state vector
         const vectorX = qubit.x + Math.cos(qubit.phase) * 20;
         const vectorY = qubit.y + Math.sin(qubit.phase) * 20;
-        
+
         ctx.beginPath();
         ctx.moveTo(qubit.x, qubit.y);
         ctx.lineTo(vectorX, vectorY);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.lineWidth = 2;
         ctx.stroke();
-        
+
         // Draw qubit label
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.font = '12px monospace';
         ctx.textAlign = 'center';
         ctx.fillText(`Q${i}`, qubit.x, qubit.y + 35);
       });
-      
+
       if (isActive) {
         requestAnimationFrame(animate);
       }
     };
-    
+
     animate();
   }, [isActive, algorithm]);
-  
+
   return (
     <div className="relative">
       <canvas
