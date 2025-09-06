@@ -104,8 +104,15 @@ const QuantumBackground = () => {
   );
 };
 
+// At line 108, replace with:
+type FloatingElementProps = {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+};
+
 // Floating Animation Component
-const FloatingElement = ({ children, delay = 0, className = "" }) => {
+const FloatingElement = ({ children, delay = 0, className = "" }: FloatingElementProps) => {
   return (
     <div 
       className={`animate-pulse ${className}`}
