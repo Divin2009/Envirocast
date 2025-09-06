@@ -105,7 +105,7 @@ const QuantumBackground = () => {
 };
 
 // Floating Animation Component
-const FloatingElement = ({ children, delay = 0, className = "" }) => {
+const FloatingElement = ({ children: React, delay = 0, className = "" }) => {
   return (
     <div 
       className={`animate-pulse ${className}`}
