@@ -7,23 +7,57 @@ import {
   GitBranch, Activity, Settings, Eye
 } from 'lucide-react';
 
-// Quantum Visualization Component
-const QuantumVisualization = ({ isActive, algorithm }) => {
+// ---------- TYPE DEFINITIONS ----------
+type AlgorithmType = {
+  title: string;
+  category: string;
+  type: string;
+  description: string;
+  metrics: { value: string; label: string }[];
+  technical: { title: string; description: string }[];
+  code: string[];
+  impacts: { value: string; label: string }[];
+  applications: { title: string; description: string }[];
+};
+
+type AlgorithmCardProps = {
+  algorithm: AlgorithmType;
+  index: number;
+  isExpanded: boolean;
+  onToggle: () => void;
+};
+
+type QuantumVisualizationProps = {
+  isActive: boolean;
+  algorithm: AlgorithmType;
+};
+
+type Qubit = { x: number; y: number; state: number; phase: number; entangled: boolean };
+type Connection = { from: number; to: number; strength: number };
+
+type SectionType = {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+// ---------- QUANTUM VISUALIZATION ----------
+const QuantumVisualization: React.FC<QuantumVisualizationProps> = ({ isActive, algorithm }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     if (!canvasRef.current || !isActive) return;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     canvas.width = 400;
     canvas.height = 300;
-    
-    const qubits = [];
-    const connections = [];
-    
+
+    const qubits: Qubit[] = [];
+    const connections: Connection[] = [];
+
     // Create quantum state visualization
     for (let i = 0; i < 8; i++) {
       qubits.push({
@@ -34,42 +68,42 @@ const QuantumVisualization = ({ isActive, algorithm }) => {
         entangled: i % 2 === 0
       });
     }
-    
+
     // Create entanglement connections
     for (let i = 0; i < qubits.length - 1; i += 2) {
       connections.push({ from: i, to: i + 1, strength: Math.random() });
     }
-    
+
     const animate = () => {
       ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       // Draw connections (entanglement)
       connections.forEach(conn => {
         const from = qubits[conn.from];
         const to = qubits[conn.to];
-        
+
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.strokeStyle = `rgba(0, 212, 255, ${conn.strength * 0.5})`;
         ctx.lineWidth = 2;
         ctx.stroke();
-        
+
         // Animate connection strength
         conn.strength = 0.3 + Math.sin(Date.now() * 0.003 + conn.from) * 0.3;
       });
-      
+
       // Draw qubits
       qubits.forEach((qubit, i) => {
         // Update quantum state
         qubit.phase += 0.02;
         qubit.state = 0.5 + Math.sin(qubit.phase) * 0.3;
-        
+
         // Draw qubit sphere
         const radius = 15 + qubit.state * 10;
         const gradient = ctx.createRadialGradient(qubit.x, qubit.y, 0, qubit.x, qubit.y, radius);
-        
+
         if (qubit.entangled) {
           gradient.addColorStop(0, 'rgba(139, 92, 246, 0.8)');
           gradient.addColorStop(1, 'rgba(139, 92, 246, 0.2)');
@@ -77,38 +111,38 @@ const QuantumVisualization = ({ isActive, algorithm }) => {
           gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
           gradient.addColorStop(1, 'rgba(0, 212, 255, 0.2)');
         }
-        
+
         ctx.beginPath();
         ctx.arc(qubit.x, qubit.y, radius, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
-        
+
         // Draw state vector
         const vectorX = qubit.x + Math.cos(qubit.phase) * 20;
         const vectorY = qubit.y + Math.sin(qubit.phase) * 20;
-        
+
         ctx.beginPath();
         ctx.moveTo(qubit.x, qubit.y);
         ctx.lineTo(vectorX, vectorY);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.lineWidth = 2;
         ctx.stroke();
-        
+
         // Draw qubit label
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.font = '12px monospace';
         ctx.textAlign = 'center';
         ctx.fillText(`Q${i}`, qubit.x, qubit.y + 35);
       });
-      
+
       if (isActive) {
         requestAnimationFrame(animate);
       }
     };
-    
+
     animate();
   }, [isActive, algorithm]);
-  
+
   return (
     <div className="relative">
       <canvas
@@ -123,12 +157,12 @@ const QuantumVisualization = ({ isActive, algorithm }) => {
   );
 };
 
-// Algorithm Detail Card
-const AlgorithmCard = ({ algorithm, index, isExpanded, onToggle }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  
-  const getIcon = (type) => {
-    const icons = {
+// ---------- ALGORITHM CARD ----------
+const AlgorithmCard: React.FC<AlgorithmCardProps> = ({ algorithm, index, isExpanded, onToggle }) => {
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const getIcon = (type: string) => {
+    const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
       superposition: Atom,
       ml: Brain,
       realtime: Activity,
@@ -139,9 +173,9 @@ const AlgorithmCard = ({ algorithm, index, isExpanded, onToggle }) => {
     };
     return icons[type] || Atom;
   };
-  
+
   const Icon = getIcon(algorithm.type);
-  
+
   return (
     <div className={`group transition-all duration-500 ${isExpanded ? 'col-span-full' : ''}`}>
       <div 
@@ -293,11 +327,12 @@ const AlgorithmCard = ({ algorithm, index, isExpanded, onToggle }) => {
   );
 };
 
+// ---------- MAIN PAGE ----------
 export default function AboutPage() {
-  const [expandedCard, setExpandedCard] = useState(null);
-  const [activeSection, setActiveSection] = useState('overview');
-  
-  const algorithms = [
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('overview');
+
+  const algorithms: AlgorithmType[] = [
     {
       title: "Quantum Superposition Modeling",
       category: "Core Algorithm",
@@ -549,8 +584,8 @@ export default function AboutPage() {
       ]
     }
   ];
-  
-  const sections = [
+
+  const sections: SectionType[] = [
     { id: 'overview', label: 'Overview', icon: Globe },
     { id: 'algorithms', label: 'Quantum Algorithms', icon: Atom },
     { id: 'architecture', label: 'System Architecture', icon: Layers },
@@ -847,7 +882,7 @@ export default function AboutPage() {
                 ].map((metric, i) => {
                   const Icon = metric.icon;
                   return (
-                    <div key={i} className={`p-6 rounded-2xl bg-gradient-to-br from-${metric.color}-500/10 to-${metric.color}-600/10 border border-${metric.color}-500/30 hover:scale-105 transition-transform duration-300`}>
+                    <div key={i} className={`p-6 rounded-2xl bg-gradient-to-br from-${metric.color}-500/10 to-${metric.color}-600/10 border border-${metric.color}-500/30 hover:scale-105 transition-tra`}>
                       <div className="flex items-center justify-between mb-4">
                         <Icon className={`w-8 h-8 text-${metric.color}-400`} />
                         <div className={`text-xs px-2 py-1 rounded-full bg-${metric.color}-500/20 text-${metric.color}-300`}>
@@ -970,7 +1005,7 @@ export default function AboutPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center group">
+            <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform group flex items-center justify-center">
               Try Interactive Models
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>

@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Globe, Zap, Target, Users, ArrowRight, Play, Pause, BarChart3, Brain, Atom, Waves } from 'lucide-react';
+import type { LucideIcon } from "lucide-react";
 
 // Animated Background Component
 const QuantumBackground = () => {
@@ -104,8 +105,19 @@ const QuantumBackground = () => {
   );
 };
 
+// At line 108, replace with:
+type FloatingElementProps = {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+};
+
 // Floating Animation Component
+<<<<<<< HEAD
 const FloatingElement = ({ children: React, delay = 0, className = "" }) => {
+=======
+const FloatingElement = ({ children, delay = 0, className = "" }: FloatingElementProps) => {
+>>>>>>> refs/remotes/origin/main
   return (
     <div 
       className={`animate-pulse ${className}`}
@@ -127,8 +139,15 @@ const FloatingElement = ({ children: React, delay = 0, className = "" }) => {
   );
 };
 
+type MetricCardProps = {
+  icon: LucideIcon;
+  value: number | string;
+  label: string;
+  color: string;
+};
+
 // Interactive Metric Card
-const MetricCard = ({ icon: Icon, value, label, color }) => {
+const MetricCard = ({ icon, value, label, color }: MetricCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [animatedValue, setAnimatedValue] = useState(0);
 

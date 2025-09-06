@@ -49,14 +49,14 @@ const ModelsPage = () => {
     { name: 'Dallas', aqi: 92, lat: 32.7767, lng: -96.7970 }
   ];
 
-  const getAQIColor = (value) => {
+  const getAQIColor = (value: number) => {
     if (value <= 50) return 'from-green-500 to-emerald-500';
     if (value <= 100) return 'from-yellow-500 to-orange-400';
     if (value <= 150) return 'from-orange-500 to-red-400';
     return 'from-red-500 to-pink-500';
   };
 
-  const getAQILabel = (value) => {
+  const getAQILabel = (value: number) => {
     if (value <= 50) return 'Good';
     if (value <= 100) return 'Moderate';
     if (value <= 150) return 'Unhealthy for Sensitive';
