@@ -7,8 +7,15 @@ import {
   GitBranch, Activity, Settings, Eye
 } from 'lucide-react';
 
+
+// Add a type for the props
+type QuantumVisualizationProps = {
+  isActive: boolean;
+  algorithm: any;
+};
+
 // Quantum Visualization Component
-const QuantumVisualization = ({ isActive, algorithm }) => {
+const QuantumVisualization = ({ isActive, algorithm }: QuantumVisualizationProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   useEffect(() => {
